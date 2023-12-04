@@ -5,7 +5,7 @@
 #include "objPos.h"
 #include "objPosArrayList.h"
 
-class Food 
+class Food //initialize class
 {
 private:    
      objPos foodPos; 

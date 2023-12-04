@@ -1,5 +1,9 @@
 #include "GameMechs.h"
 #include "MacUILib.h"
+
+using namespace std;
+
+//constructors
 GameMechs::GameMechs()
 {
     input = 0;
@@ -8,34 +12,51 @@ GameMechs::GameMechs()
     loseFlag = false;
     boardSizeX = 20;
     boardSizeY = 10;
+
+    foodPos.setObjPos(-1, -1, 'o');
 }
 
+//constructors
 GameMechs::GameMechs(int boardX, int boardY)
 {
     input = 0;
     score = 0;
     exitFlag = false;
     loseFlag = false;
-    boardSizeX = boardX;    boardSizeY = boardY;
+    boardSizeX = boardX;
+    boardSizeY = boardY;
+    foodPos.setObjPos(-1, -1, 'o'); 
 
-}// do you need a destructor?
+    if( boardX <= 0){
+		boardX = 20; 
+	}
+	if (boardY <= 0){
+		boardY = 10;
+	}
+
+}// deconstructor
 GameMechs::~GameMechs() {
     // Destructor implementation
     // Add code to release any allocated resources
 }
 
+// exit flag status
 bool GameMechs::getExitFlagStatus(){
     return exitFlag;
 }
 void GameMechs::setExitTrue(){
     exitFlag = true;
 }
+
+//lose flag status
 bool GameMechs::getLoseFlagStatus(){
     return loseFlag;
 }
 void GameMechs::setLoseFlag(){
     loseFlag = true;
 }
+
+// current score
 int GameMechs::getScore(){
     return score;
 }
@@ -43,7 +64,7 @@ int GameMechs::getScore(){
 void GameMechs::incrementScore()
 {
     int n = 1;
-    score += n;
+    score += n; //increment score by 1
 }
 
 char GameMechs::getInput()
@@ -77,7 +98,7 @@ void GameMechs::clearInput()
     input = '\0';
 }
 
-
+//Generates a new food position
 void GameMechs::generateFood(objPosArrayList *blockOff) {
     srand(time(NULL));
 
@@ -85,6 +106,8 @@ void GameMechs::generateFood(objPosArrayList *blockOff) {
     foodPos.y = (rand() % (boardSizeY-2))+1;
 
     objPos tempPos;
+
+    //checks for overlap with blockOff positions
     for (int i = 0; i < blockOff->getSize(); i++){
         blockOff ->getElement(tempPos, i);
         while(foodPos.isPosEqual(&tempPos)){
@@ -95,7 +118,7 @@ void GameMechs::generateFood(objPosArrayList *blockOff) {
 }
 
 
-
+// get current food position
 void GameMechs::getFoodPos(objPos &returnFood) {
     // Implementation of getFoodPos
     // Retrieve the food position and store it in returnPos

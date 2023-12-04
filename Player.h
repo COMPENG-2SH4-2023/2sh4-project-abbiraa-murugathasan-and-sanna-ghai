@@ -1,37 +1,31 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-
 #include "objPos.h"
 #include "objPosArrayList.h"
 
+// Forward declaration of GameMechs class
 class GameMechs;
 
-enum Dir { UP, DOWN, LEFT, RIGHT, STOP };
-
 class Player {
-    public:
-        //enum Dir {UP, DOWN, LEFT, RIGHT, STOP};  // This is the direction state
+public:
+    // Enumeration for direction state
+    enum Dir { UP, DOWN, LEFT, RIGHT, STOP };  
 
-        Player(GameMechs* thisGMRef);
-        ~Player();
+    Player(GameMechs* thisGMRef);
+    ~Player();
 
-        objPosArrayList* getPlayerPos(); // Upgrade this in iteration 3.
-        void updatePlayerDir();
-        void movePlayer();
-        //needs more action here, after moving the player 
-        int getSnakeLength() const;
-        
+    objPosArrayList* getPlayerPos();
+    void updatePlayerDir();
+    void movePlayer();
+    int getSnakeLength() const;
+    bool Collision();
 
-
-    private:
-        objPosArrayList *playerPosList;   // Upgrade this in iteration 3.       
-        enum Dir myDir;
-        bool exitFlag;
-
-        // Need a reference to the Main Game Mechanisms
-        GameMechs* mainGameMechsRef;
-        
+private:
+    objPosArrayList* playerPosList;
+    enum Dir myDir;
+    bool exitFlag;
+    GameMechs* mainGameMechsRef;
 };
 
 #endif

@@ -1,47 +1,43 @@
 #include "Player.h"
 #include "GameMechs.h"
 
-
+// Constructor: Initializes the Player object with a reference to the GameMechs instance and sets initial position.
 Player::Player(GameMechs* thisGMRef)
-//: playerPos(5, 5, '@'), myDir(STOP), mainGameMechsRef(thisGMRef)
 {
     mainGameMechsRef = thisGMRef;
     myDir = STOP;
 
-    // more actions to be included
+    // Set initial position in the middle of the game board
     objPos tempPos;
-    tempPos.setObjPos(mainGameMechsRef->getBoardSizeX()/2, mainGameMechsRef->getBoardSizeY()/2,'@');
+    tempPos.setObjPos(mainGameMechsRef->getBoardSizeX() / 2, mainGameMechsRef->getBoardSizeY() / 2, '@');
 
+    // Initialize playerPosList with the initial position
     playerPosList = new objPosArrayList();
     playerPosList->insertHead(tempPos);
-    playerPosList->insertHead(tempPos);
-    playerPosList->insertHead(tempPos);
-    playerPosList->insertHead(tempPos);
-    playerPosList->insertHead(tempPos);
-    
-
 }
+
+// Destructor: Frees dynamically allocated memory.
 Player::~Player()
 {
-    // delete any heap members here
     delete playerPosList;
 }
 
-//void objPosArrayList* 
+// Getter for player position list.
 objPosArrayList* Player::getPlayerPos()
 {
-     return playerPosList;
+    return playerPosList;
 }
 
+// Updates the player's direction based on user input.
 void Player::updatePlayerDir()
 {
     char input = mainGameMechsRef->getInput();
-   
+
     switch (input)
     {
-         case ' ':  // exit
-                exitFlag = 1;
-                break;
+    case ' ':
+        mainGameMechsRef->setExitTrue();
+        break;
     case 'w':
         if (myDir != UP && myDir != DOWN)
             myDir = UP;
@@ -63,60 +59,63 @@ void Player::updatePlayerDir()
         break;
     }
 
-
-    // Clear the input buffer
-    mainGameMechsRef->clearInput();
-    // PPA3 input processing logic        
+    // Additional input processing logic can be added here.
 }
 
+// Moves the player based on the current direction.
 void Player::movePlayer()
 {
     objPos currentHead;
     playerPosList->getHeadElement(currentHead);
 
+    // Update the head position based on the current direction.
     switch (myDir)
     {
     case UP:
         currentHead.y--;
-        if(currentHead.y <= 0)
-        currentHead.y = mainGameMechsRef -> getBoardSizeY() -2;
-        break;
-    case DOWN:
-        currentHead.y++;
-        if(currentHead.y >= mainGameMechsRef->getBoardSizeY())
-        currentHead.y = 1;
-        break;
-    case LEFT:
-        currentHead.x--;
-        if(currentHead.x <= 0)
-        currentHead.x = mainGameMechsRef->getBoardSizeX() -2;
+        if (currentHead.y < 0)
+            currentHead.y = mainGameMechsRef->getBoardSizeY() - 1;
         break;
     case RIGHT:
         currentHead.x++;
-        if(currentHead.x >= mainGameMechsRef->getBoardSizeX())
-        currentHead.x = 1;
+        if (currentHead.x >= mainGameMechsRef->getBoardSizeX())
+            currentHead.x = 0;
         break;
-
-    case STOP:
+    case LEFT:
+        currentHead.x--;
+        if (currentHead.x < 0)
+            currentHead.x = mainGameMechsRef->getBoardSizeX() - 1;
+        break;
+    case DOWN:
+        currentHead.y++;
+        if (currentHead.y >= mainGameMechsRef->getBoardSizeY())
+            currentHead.y = 0;
+        break;
     default:
-        // Handle other cases or do nothing for unrecognized direction
         break;
     }
-
+    // Update the player's position list, inserting the new head and removing the tail.
     playerPosList->insertHead(currentHead);
-
     playerPosList->removeTail();
 
-    // objPos foodPos;
-    // mainGameMechsRef->getFoodPos(foodPos);
-
-    // if (playerPos.x == foodPos.x && playerPos.y == foodPos.y) {
-    //     // Increase score and respawn food
-    //     score++;
-    //     mainGameMechsRef->respawnFood();
-    // }
-    // PPA3 Finite State Machine logic
+    // Additional logic for collision with food or FSM can be added here.
 }
 
+// Checks for self-collision by comparing the head position with the rest of the body.
+bool Player::Collision() // Correct function name
+{
+    objPos head;
+    objPos tempBody;
+    playerPosList->getHeadElement(head);
 
-
+    // Iterate through the player's body and check for collision with the head.
+    for (int i = 2; i < playerPosList->getSize(); i++)
+    {
+        playerPosList->getElement(tempBody, i);
+        if (tempBody.isPosEqual(&head))
+        {
+            return true;
+        }
+    }
+    return false;
+} 
