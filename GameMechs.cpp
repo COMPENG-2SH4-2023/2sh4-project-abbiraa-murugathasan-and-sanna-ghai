@@ -19,6 +19,10 @@ GameMechs::GameMechs(int boardX, int boardY)
     boardSizeX = boardX;    boardSizeY = boardY;
 
 }// do you need a destructor?
+GameMechs::~GameMechs() {
+    // Destructor implementation
+    // Add code to release any allocated resources
+}
 
 bool GameMechs::getExitFlagStatus(){
     return exitFlag;
@@ -74,13 +78,26 @@ void GameMechs::clearInput()
 }
 
 
-void GameMechs::generateFood(objPos blockOff) {
-    
+void GameMechs::generateFood(objPosArrayList *blockOff) {
+    srand(time(NULL));
+
+    foodPos.x = (rand() % (boardSizeX-2))+1;
+    foodPos.y = (rand() % (boardSizeY-2))+1;
+
+    objPos tempPos;
+    for (int i = 0; i < blockOff->getSize(); i++){
+        blockOff ->getElement(tempPos, i);
+        while(foodPos.isPosEqual(&tempPos)){
+            foodPos.x = (rand() % (boardSizeX-2))+1;
+            foodPos.y = (rand() % (boardSizeY-2))+1;
+        }
+    }
 }
 
 
 
-void GameMechs::getFoodPos(objPos &returnPos) {
+void GameMechs::getFoodPos(objPos &returnFood) {
     // Implementation of getFoodPos
     // Retrieve the food position and store it in returnPos
+    returnFood.setObjPos(foodPos.x, foodPos.y, foodPos.symbol);
 }

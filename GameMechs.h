@@ -53,10 +53,10 @@ class GameMechs
         int getBoardSizeX();
         int getBoardSizeY();
 
-        void generateFood(objPos blockOff);
+        void generateFood(objPosArrayList *blockOff);
         //need to accept the player body array lidt
         // go through each aeeay list element to make sure they are all blocked from random food
-        void getFoodPos(objPos &returnPos);
+        void getFoodPos(objPos &returnFood);
         
         
       

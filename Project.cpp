@@ -54,6 +54,7 @@ void Initialize(void)
 
     myGM  = new GameMechs(26,13);
     player = new Player(myGM);
+   
 
     // think about when to generate food
 
@@ -64,7 +65,8 @@ void Initialize(void)
     //exitFlag =false;
     objPos tempPos{-1,-1,'o'};
     //player -> getPlayerPos(tempPos);
-    myGM -> generateFood(tempPos);
+    objPosArrayList tempPosList;
+    myGM->generateFood(&tempPosList);
 
     
 }
@@ -81,9 +83,29 @@ void GetInput(void)
 }
 
 void RunLogic(void)
-{
+{  
+    objPos tempFood;
+    objPos tempBody;
+    objPos newInsert;
+    objPosArrayList* playerBody = player->getPlayerPos();
+    myGM->getFoodPos(tempFood);
+
    player ->updatePlayerDir();
    player ->movePlayer();
+
+   playerBody->getHeadElement(tempBody);
+   if(tempBody.isPosEqual(&tempFood))
+   {
+    myGM->incrementScore();
+    newInsert.setObjPos(tempBody.x, tempBody.y, '*');
+    playerBody->insertHead(newInsert);
+    myGM->generateFood(playerBody);
+   }
+
+   if (player->getPlayerPos()->getSize() > 5) // Adjust the condition as needed
+    {
+        myGM->setLoseFlag();
+    }
 
    myGM ->clearInput();
 }
@@ -92,13 +114,14 @@ void DrawScreen(void)
 {
     MacUILib_clearScreen();
 
-    bool drawn; 
+    bool drawn;
+    objPos tempBody; 
+    objPos tempFood;
 
     objPosArrayList* playerBody = player->getPlayerPos();
-    objPos tempBody;
 
-    objPos tempFoodPos;
-    myGM -> getFoodPos(tempFoodPos);
+    myGM -> getFoodPos(tempFood);
+    MacUILib_printf("--------Snake Game--------\n");
 
     for (int y = 0; y < myGM->getBoardSizeY(); ++y)
     {
@@ -108,7 +131,7 @@ void DrawScreen(void)
             for(int z = 0; z < playerBody->getSize(); z++)
             {
                 playerBody->getElement(tempBody,z);
-                if(tempBody.x == x && tempBody.y == y)
+                if(x == tempBody.x  && y == tempBody.y)
                 {
                     MacUILib_printf("%c", tempBody.symbol);
                     drawn = true;
@@ -116,8 +139,7 @@ void DrawScreen(void)
                 }
             }
 
-            if(drawn) 
-            continue;//if player body drawn, don't draw anything below
+            if(drawn) continue;//if player body drawn, don't draw anything below
 
             if (y == 0 || y == myGM->getBoardSizeY() - 1 || x == 0 || x == myGM->getBoardSizeX() - 1)
             {
@@ -125,8 +147,8 @@ void DrawScreen(void)
                 MacUILib_printf("%c", '#');
             }
            
-            else if (x == tempFoodPos.x && y == tempFoodPos.y){
-                MacUILib_printf("%c", tempFoodPos.symbol);
+            else if (x == tempFood.x && y == tempFood.y){
+                MacUILib_printf("%c", tempFood.symbol);
             }
             else
                 MacUILib_printf("%c", ' ');
@@ -135,12 +157,24 @@ void DrawScreen(void)
         MacUILib_printf("\n");
      
     }
-    //MacUILib_printf("Score: %d\n", player->getScore());
-    objPos tempPos;
-    playerBody->getHeadElement(tempBody);
+
+    MacUILib_printf("Press WASD to start or press SPACE to exit\n");
     MacUILib_printf("Score: %d\n", myGM->getScore());
     
-    MacUILib_printf("Food Pos: <%d, %d\n", tempFoodPos.x, tempFoodPos.y);
+    //playerBody->getHeadElement(tempBody);
+   
+   if(myGM->getExitFlagStatus())
+   {
+    MacUILib_printf("\nEnd Game.");
+   }
+
+   if(myGM->getLoseFlagStatus())
+   {
+    MacUILib_printf("\nYou Lost.");
+    myGM->setExitTrue();
+   }
+    
+    MacUILib_printf("Food Pos: <%d, %d>\n", tempFood.x, tempFood.y);
 
   
 }
@@ -157,6 +191,6 @@ void CleanUp(void)
   
     MacUILib_uninit();
 
-    //delete myGM;
-    //delete player;
+    delete myGM;
+    delete player;
 }

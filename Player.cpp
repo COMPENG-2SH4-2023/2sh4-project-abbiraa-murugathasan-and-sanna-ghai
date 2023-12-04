@@ -36,9 +36,12 @@ objPosArrayList* Player::getPlayerPos()
 void Player::updatePlayerDir()
 {
     char input = mainGameMechsRef->getInput();
-
+   
     switch (input)
     {
+         case ' ':  // exit
+                exitFlag = 1;
+                break;
     case 'w':
         if (myDir != UP && myDir != DOWN)
             myDir = UP;
@@ -114,5 +117,6 @@ void Player::movePlayer()
     // }
     // PPA3 Finite State Machine logic
 }
+
 
 

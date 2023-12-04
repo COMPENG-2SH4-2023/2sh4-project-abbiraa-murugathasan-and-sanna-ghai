@@ -15,7 +15,7 @@ Food::~Food()
 {
     void Food::generateFood(objPosArrayList* playerPosList)
     {
-        srand(static_cast<unsigned int>(time(nullptr)));
+        srand(time(nullptr));
         bool playerOverlap;
         do{
             foodPos.x = (rand() % 20) + 1;
@@ -39,5 +39,8 @@ Food::~Food()
 
 void Food::getFoodPos(objPos &returnPos)
 {
-    returnPos = foodPos;
+    foodPos.x = rand() % getBoardSizeX();
+    foodPos.y = rand() % getBoardSizeY();
+    foodPos.symbol = 'o';
+    //returnPos = foodPos;
 }
